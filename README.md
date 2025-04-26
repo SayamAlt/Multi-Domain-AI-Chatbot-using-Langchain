@@ -146,8 +146,8 @@ This project is licensed under the Apache 2.0 License.
 
 ## 👨‍💻 Author
 
-Name: Sayam Kumar
-Email: sayamk565@gmail.com
+Name: Sayam Kumar<br>
+Email: sayamk565@gmail.com<br>
 LinkedIn: https://www.linkedin.com/in/sayam-kumar/
 
 Feel free to contact me through email or LinkedIn in case you have any queries about this project.
