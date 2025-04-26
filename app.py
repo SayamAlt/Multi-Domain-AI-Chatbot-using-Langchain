@@ -266,27 +266,36 @@ def explain_code(code):
     explanation_chain = LLMChain(llm=llm, prompt=explanation_prompt, output_parser=parser)
     return explanation_chain.invoke({"code": code_to_explain})
 
+def validate_code_syntax(code):
+    try:
+        ast.parse(code)
+        return True
+    except SyntaxError:
+        return False
 def optimize_code(code):
     """Optimizes Python code for performance, efficiency, and readability."""
-
+    if not validate_code_syntax(code):
+        return "⚠️ The input code has syntax errors. Please correct and try again."
+        
     prompt = PromptTemplate(
         template="""
-            You are an expert Python developer and code optimizer.
+            You are an expert Python code optimizer.
 
-            Carefully read the following Python code snippet, and rewrite it in an optimized way:
-            - Improve speed, scalability, memory usage, and readability.
-            - Apply best Python practices like list comprehensions, vectorization, efficient libraries, etc.
-            - Maintain the original functionality.
+            When given a Python code snippet:
+            - Check for any syntax issues, and fix them first.
+            - Rewrite the code in a highly efficient, readable, and Pythonic way.
+            - Apply best practices: use list comprehensions, vectorized operations, efficient libraries, avoid loops when possible.
+            - If code is badly formatted or incomplete, try to infer the intention and cleanly reconstruct it.
+            - Maintain the same functionality.
 
-            Input Code:
+            Return your response in exactly this format:
+            ---
+            **Fixed Code:**
             ```python
-            {code}
+            # Here, corrected and optimized code
             ```
-
-            Optimized Code:
-            ```python
-            <optimized Python code here>
-            ```
+            ---
+            **Explanation:**
         """,
         input_variables=["code"]
     )
