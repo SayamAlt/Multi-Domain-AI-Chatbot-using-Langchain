@@ -101,14 +101,14 @@ EXCHANGE_RATE_API_KEY=your-exchangerate-api-key
 ## 🧠 How It Works
 
 <ol>
-    <li>**Document Upload**: Upload multiple PDFs or DOCX files to the sidebar.</li>
-    <li>**Question Asking**: Ask questions related to the uploaded documents.</li>
-    <li>**Tool Routing**: LangChain agent intelligently selects the best tool:</li>
-    <li>**SmartMathSolver** for math</li>
-    <li>**PythonDebugger** for code</li>
-    <li>**SmartWebSearch** for real-world info</li>
-    <li>**Fallback Handling**: If the document lacks an answer, the assistant gracefully transitions to general knowledge.</li>
-    <li>**Multi-turn Chat**: Context is retained using conversation memory.</li>
+    <li><b>Document Upload</b>: Upload multiple PDFs or DOCX files to the sidebar.</li>
+    <li><b>Question Asking</b>: Ask questions related to the uploaded documents.</li>
+    <li><b>Tool Routing</b>: LangChain agent intelligently selects the best tool:</li>
+    <li><b>SmartMathSolver</b> for math</li>
+    <li><b>PythonDebugger</b> for code</li>
+    <li><b>SmartWebSearch</b> for real-world info</li>
+    <li><b>Fallback Handling</b>: If the document lacks an answer, the assistant gracefully transitions to general knowledge.</li>
+    <li><b>Multi-turn Chat</b>: Context is retained using conversation memory.</li>
 </ol>
 
 ---
