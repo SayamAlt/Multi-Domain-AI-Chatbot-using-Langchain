@@ -1,0 +1,10 @@
+langchain
+langchain-core
+langchain-openai
+langchain-anthropic
+streamlit
+python-dotenv
+tiktoken
+sympy
+langchain-experimental
+langchain-community
