@@ -14,7 +14,7 @@ from langchain.agents.agent_types import AgentType
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import LLMChainExtractor
 from langchain_community.tools import DuckDuckGoSearchResults
-from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
+from langchain_core.output_parsers import StrOutputParser
 from langchain_anthropic import ChatAnthropic
 from dotenv import load_dotenv
 from sympy import symbols, diff, integrate, solve, sympify, Basic
@@ -45,7 +45,6 @@ embeddings = OpenAIEmbeddings(api_key=api_key)
 memory = ConversationBufferWindowMemory(memory_key="chat_history", return_messages=True, k=5)
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 parser = StrOutputParser()
-json_parser = JsonOutputParser()
 python_repl = PythonREPL()
 
 st.set_page_config(page_title="Multi-Domain AI Chatbot", layout="wide")
