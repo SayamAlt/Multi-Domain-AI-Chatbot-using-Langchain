@@ -13,3 +13,9 @@ python-dotenv
 sympy
 duckduckgo-search
 anthropic
+numpy
+pandas
+matplotlib
+scikit-learn
+seaborn
+scipy
