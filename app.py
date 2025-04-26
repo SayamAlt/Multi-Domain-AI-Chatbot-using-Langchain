@@ -181,10 +181,27 @@ def equation_solver(equation):
         return f"The solution(s) to `{equation}` for `{var}` are: {solutions}"
     except Exception as e:
         return f"⚠️ Error solving equation: {str(e)}"
+
+def validate_code_syntax(code):
+    try:
+        ast.parse(code)
+        return True
+    except SyntaxError:
+        return False
     
+def remove_comments(code: str) -> str:
+    """Removes comments from the Python code."""
+    # Remove inline comments
+    code = re.sub(r'#.*', '', code)
+    # Remove multi-line string comments (docstrings) if any
+    code = re.sub(r'""".*?"""', '', code, flags=re.DOTALL)
+    code = re.sub(r"'''.*?'''", '', code, flags=re.DOTALL)
+    return code.strip()
 
 def debug_code(code):
     """ Debugs Python code and detect potential issues."""
+    code = remove_comments(code)
+    
     prompt = PromptTemplate(
         template="""
             You are an expert Python developer.
@@ -205,18 +222,13 @@ def debug_code(code):
     chain = LLMChain(llm=llm, prompt=prompt, output_parser=parser)
     return chain.invoke({"code": code})
 
-def is_valid_python_code(text):
-    try:
-        ast.parse(text)
-        return True
-    except:
-        return False
 def explain_code(code):
     """
     Explains the logic and structure of Python code.
     If user provides description, generates code first.
     """
-    if not is_valid_python_code(code):
+    code = remove_comments(code)
+    if not validate_code_syntax(code):
         # User provided a topic/description
         generate_code_prompt = PromptTemplate(
             template="""
@@ -262,24 +274,18 @@ def explain_code(code):
         input_variables=["code"]
     )
 
-
     explanation_chain = LLMChain(llm=llm, prompt=explanation_prompt, output_parser=parser)
     return explanation_chain.invoke({"code": code_to_explain})
 
-def validate_code_syntax(code):
-    try:
-        ast.parse(code)
-        return True
-    except SyntaxError:
-        return False
 def optimize_code(code):
     """Optimizes Python code for performance, efficiency, and readability."""
+    code = remove_comments(code)
     if not validate_code_syntax(code):
         return "⚠️ The input code has syntax errors. Please correct and try again."
         
     prompt = PromptTemplate(
         template="""
-            You are an expert Python code optimizer.
+            You are an expert Python code optimizer. First, fix any syntax errors, then optimize it for performance, readability, and efficiency.
 
             When given a Python code snippet:
             - Check for any syntax issues, and fix them first.
@@ -753,7 +759,7 @@ user_query = st.chat_input("Ask me anything...")
 if user_query:
     st.session_state.chat_history.append(("user", user_query))
     conversation_context = "\n".join(
-        f"{role.upper()}: {msg}" for role, msg in st.session_state.chat_history[-15:]
+        f"{role.upper()}: {msg}" for role, msg in st.session_state.chat_history[-5:]
     )
 
     with st.spinner("Thinking..."):
@@ -768,7 +774,9 @@ if user_query:
                 Current Question:
                 {user_query}
 
-                Continue the conversation naturally.
+                Continue the conversation naturally. Never mention the conversation history.
+                Answer the question based on your knowledge and the context provided.
+                If the question is not related to the conversation, answer it as a new question.
                 """
                 response = agent.run(formatted_query)
 
