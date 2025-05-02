@@ -29,14 +29,32 @@ if 'secrets' in st.secrets:
     exchange_rate_api_key = st.secrets["secrets"]["EXCHANGE_RATE_API_KEY"]
     news_api_key = st.secrets["secrets"]["NEWS_API_KEY"]
     anthropic_api_key = st.secrets["secrets"]["ANTHROPIC_API_KEY"]
+    weatherstack_api_key = st.secrets["secrets"]["WEATHERSTACK_API_KEY"]
 else:
     api_key = os.environ.get("OPENAI_API_KEY")
     exchange_rate_api_key = os.environ.get("EXCHANGE_RATE_API_KEY")
     news_api_key = os.environ.get("NEWS_API_KEY")
     anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY")
+    weatherstack_api_key = os.environ.get("WEATHERSTACK_API_KEY")
 
 if api_key is None:
     st.error("OpenAI API key not found. Please set it in the .env file or in Streamlit secrets.")
+    st.stop()
+
+if exchange_rate_api_key is None:
+    st.error("ExchangeRate API key not found. Please set it in the .env file or in Streamlit secrets.")
+    st.stop()
+    
+if news_api_key is None:
+    st.error("NewsAPI key not found. Please set it in the .env file or in Streamlit secrets.")
+    st.stop()
+    
+if anthropic_api_key is None:
+    st.error("Anthropic API key not found. Please set it in the .env file or in Streamlit secrets.")
+    st.stop()
+    
+if weatherstack_api_key is None:
+    st.error("Weatherstack API key not found. Please set it in the .env file or in Streamlit secrets.")
     st.stop()
 
 llm = ChatOpenAI(api_key=api_key, temperature=0.7)
@@ -481,6 +499,13 @@ def smart_math_solver(query: str) -> str:
     except Exception as e:
         return f"⚠️ Error solving the math problem: {str(e)}"
     
+def get_weather_data(location: str) -> str:
+    """
+        Fetches the current weather data for a given location using Weatherstack API.
+    """
+    response = requests.get(f"http://api.weatherstack.com/current?access_key={weatherstack_api_key}&query={location}")
+    return response.json()
+    
 FALLBACK_TRIGGERS = [
     "not mentioned", 
     "not discussed", 
@@ -695,6 +720,15 @@ generate_code_tool = Tool(
     )
 )
 
+weather_tool = Tool(
+    name="Get Weather Condition",
+    func=get_weather_data,
+    description=(
+        "Fetches the current weather condition for a location. "
+        "Use this when the user asks for the weather in a specific location."
+    )
+)
+
 general_chat_fallback_tool = Tool(
     name="General Chat",
     func=general_chat_tool,
@@ -703,7 +737,7 @@ general_chat_fallback_tool = Tool(
     )
 )
 
-tools = [math_tool, search_tool, news_tool, wikipedia_tool, currency_tool, debug_tool, code_execution_tool, explain_tool, optimize_tool, generate_code_tool, general_chat_fallback_tool]
+tools = [math_tool, search_tool, news_tool, wikipedia_tool, currency_tool, debug_tool, code_execution_tool, explain_tool, optimize_tool, generate_code_tool, weather_tool, general_chat_fallback_tool]
 tools.append(extract_symbols)
 tools.append(derivative_calculator)
 tools.append(integral_calculator)
@@ -739,6 +773,7 @@ st.chat_message("assistant").markdown("""
 - 🧠 **Code Explanation**: Understand complex code in a simple way
 - ⚡ **Code Optimization**: Make your code faster, cleaner, and better
 - 💻 **Code Execution**: Instantly run your Python snippets
+- 🌤 **Weather Condition**: Get real-time weather updates
 - 💬 **General Chat**: Explore ideas, ask questions, or just talk!
 
 ---
